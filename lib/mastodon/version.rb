@@ -13,11 +13,11 @@ module Mastodon
     end
 
     def patch
-      1
+      0
     end
 
     def pre
-      nil
+      6
     end
 
     def to_a

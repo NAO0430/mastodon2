@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Api::Activitypub::ActivitiesController < ApiController
-  include Authorization
-
   # before_action :set_follow, only: [:show_follow]
   before_action :set_status, only: [:show_status]
 
@@ -10,7 +8,7 @@ class Api::Activitypub::ActivitiesController < ApiController
 
   # Show a status in AS2 format, as either an Announce (reblog) or a Create (post) activity.
   def show_status
-    authorize @status, :show?
+    return forbidden unless @status.permitted?
 
     if @status.reblog?
       render :show_status_announce

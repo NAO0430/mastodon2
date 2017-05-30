@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
 class FavouriteService < BaseService
-  include Authorization
-
   # Favourite a status and notify remote user
   # @param [Account] account
   # @param [Status] status
   # @return [Favourite]
   def call(account, status)
-    authorize_with account, status, :show?
+    raise Mastodon::NotPermittedError unless status.permitted?(account)
 
     favourite = Favourite.create!(account: account, status: status)
 

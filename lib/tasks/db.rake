@@ -5,10 +5,7 @@ namespace :db do
     desc 'Setup the db or migrate depending on state of db'
     task setup: :environment do
       begin
-        if ActiveRecord::Migrator.current_version.zero?
-          Rake::Task['db:migrate'].invoke
-          Rake::Task['db:seed'].invoke
-        end
+        ActiveRecord::Base.connection
       rescue ActiveRecord::NoDatabaseError
         Rake::Task['db:setup'].invoke
       else

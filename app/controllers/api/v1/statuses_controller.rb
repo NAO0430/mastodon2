@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Api::V1::StatusesController < ApiController
-  include Authorization
-
   before_action :authorize_if_got_token, except:            [:create, :destroy, :reblog, :unreblog, :favourite, :unfavourite, :mute, :unmute]
   before_action -> { doorkeeper_authorize! :write }, only:  [:create, :destroy, :reblog, :unreblog, :favourite, :unfavourite, :mute, :unmute]
   before_action :require_user!, except:  [:show, :context, :card, :reblogged_by, :favourited_by]
@@ -132,10 +130,7 @@ class Api::V1::StatusesController < ApiController
 
   def set_status
     @status = Status.find(params[:id])
-    authorize @status, :show?
-  rescue Mastodon::NotPermittedError
-    # Reraise in order to get a 404 instead of a 403 error code
-    raise ActiveRecord::RecordNotFound
+    raise ActiveRecord::RecordNotFound unless @status.permitted?(current_account)
   end
 
   def set_conversation

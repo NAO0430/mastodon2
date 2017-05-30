@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class StatusesController < ApplicationController
-  include Authorization
-
   layout 'public'
 
   before_action :set_account
@@ -32,10 +30,7 @@ class StatusesController < ApplicationController
     @stream_entry = @status.stream_entry
     @type         = @stream_entry.activity_type.downcase
 
-    authorize @status, :show?
-  rescue Mastodon::NotPermittedError
-    # Reraise in order to get a 404
-    raise ActiveRecord::RecordNotFound
+    raise ActiveRecord::RecordNotFound unless @status.permitted?(current_account)
   end
 
   def check_account_suspension

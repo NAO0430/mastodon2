@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class MediaController < ApplicationController
-  include Authorization
-
   before_action :verify_permitted_status
 
   def show
@@ -16,9 +14,6 @@ class MediaController < ApplicationController
   end
 
   def verify_permitted_status
-    authorize media_attachment.status, :show?
-  rescue Mastodon::NotPermittedError
-    # Reraise in order to get a 404 instead of a 403 error code
-    raise ActiveRecord::RecordNotFound
+    raise ActiveRecord::RecordNotFound unless media_attachment.status.permitted?(current_account)
   end
 end

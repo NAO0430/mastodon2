@@ -1,7 +1,11 @@
-import { jsdom } from 'jsdom/lib/old-api';
 import chai from 'chai';
 import chaiEnzyme from 'chai-enzyme';
 chai.use(chaiEnzyme());
+
+/**
+ * http://airbnb.io/enzyme/docs/guides/jsdom.html
+ */
+var jsdom = require('jsdom').jsdom;
 
 var exposedProperties = ['window', 'navigator', 'document'];
 

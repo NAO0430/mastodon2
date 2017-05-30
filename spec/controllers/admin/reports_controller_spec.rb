@@ -10,38 +10,27 @@ describe Admin::ReportsController do
 
   describe 'GET #index' do
     it 'returns http success with no filters' do
-      specified = Fabricate(:report, action_taken: false)
-      Fabricate(:report, action_taken: true)
-
+      allow(Report).to receive(:unresolved).and_return(Report.all)
       get :index
 
-      reports = assigns(:reports).to_a
-      expect(reports.size).to eq 1
-      expect(reports[0]).to eq specified
       expect(response).to have_http_status(:success)
+      expect(Report).to have_received(:unresolved)
     end
 
     it 'returns http success with resolved filter' do
-      specified = Fabricate(:report, action_taken: true)
-      Fabricate(:report, action_taken: false)
-
+      allow(Report).to receive(:resolved).and_return(Report.all)
       get :index, params: { resolved: 1 }
 
-      reports = assigns(:reports).to_a
-      expect(reports.size).to eq 1
-      expect(reports[0]).to eq specified
-
       expect(response).to have_http_status(:success)
+      expect(Report).to have_received(:resolved)
     end
   end
 
   describe 'GET #show' do
-    it 'renders report' do
+    it 'returns http success' do
       report = Fabricate(:report)
 
       get :show, params: { id: report }
-
-      expect(assigns(:report)).to eq report
       expect(response).to have_http_status(:success)
     end
   end

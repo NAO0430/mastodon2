@@ -31,7 +31,7 @@ run.config:
     - yarn.lock
 
   extra_steps:
-    - envsubst < .env.nanobox > .env
+    - cp .env.nanobox .env
     - gem install bundler
     - bundle config build.nokogiri --with-iconv-dir=/data/ --with-zlib-dir=/data/
     - bundle config build.nokogumbo --with-iconv-dir=/data/ --with-zlib-dir=/data/
@@ -43,8 +43,9 @@ run.config:
 deploy.config:
   extra_steps:
     - NODE_ENV=production bundle exec rake assets:precompile
+    - "[ -r /app/.env.production ] || sed 's/LOCAL_HTTPS=.*/LOCAL_HTTPS=true/i' /app/.env.nanobox > /app/.env.production"
   transform:
-    - "sed 's/LOCAL_HTTPS=.*/LOCAL_HTTPS=true/i' /app/.env.nanobox | envsubst > /app/.env.production"
+    - envsubst < /app/.env.production > /tmp/.env.production && mv /tmp/.env.production /app/.env.production
     - |-
         if [ -z "$LOCAL_DOMAIN" ]
         then
